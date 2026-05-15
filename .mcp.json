@@ -1,0 +1,9 @@
+{
+	"mcpServers": {
+		"codex-lsp": {
+			"command": "node",
+			"args": ["./dist/cli.js", "mcp"],
+			"cwd": "."
+		}
+	}
+}

@@ -1,0 +1,35 @@
+{
+	"name": "codex-lsp",
+	"version": "0.1.0",
+	"description": "Expose Language Server Protocol diagnostics and navigation tools to Codex.",
+	"author": {
+		"name": "Yeongyu Kim",
+		"email": "yeongyu@users.noreply.github.com",
+		"url": "https://github.com/code-yeongyu"
+	},
+	"homepage": "https://github.com/code-yeongyu/codex-lsp",
+	"repository": "https://github.com/code-yeongyu/codex-lsp",
+	"license": "MIT",
+	"keywords": ["codex", "codex-plugin", "lsp", "language-server-protocol", "mcp", "diagnostics"],
+	"skills": "./skills/",
+	"hooks": "./hooks/hooks.json",
+	"mcpServers": "./.mcp.json",
+	"interface": {
+		"displayName": "Codex LSP",
+		"shortDescription": "Adds LSP diagnostics and navigation tools",
+		"longDescription": "Codex LSP ports the pi-lsp-client language-server stack into a Codex plugin. It checks edited files after apply_patch and other mutation tools, then exposes MCP tools for diagnostics, definitions, references, symbols, rename preparation, rename application, and server status.",
+		"developerName": "Yeongyu Kim",
+		"category": "Developer Tools",
+		"capabilities": ["Hooks", "MCP Tools", "Code Intelligence"],
+		"websiteURL": "https://github.com/code-yeongyu/codex-lsp",
+		"privacyPolicyURL": "https://github.com/code-yeongyu/codex-lsp#privacy",
+		"termsOfServiceURL": "https://github.com/code-yeongyu/codex-lsp#license",
+		"defaultPrompt": [
+			"Run LSP diagnostics on the files I just edited.",
+			"Use LSP to find references before changing this symbol.",
+			"Check whether this rename is safe with lsp_prepare_rename."
+		],
+		"brandColor": "#0F766E",
+		"screenshots": []
+	}
+}
