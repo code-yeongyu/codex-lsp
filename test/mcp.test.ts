@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { handleLspMcpRequest } from "../src/mcp.js";
 
-describe("codex-lsp MCP server", () => {
+describe("lsp MCP server", () => {
 	it("responds to initialize with tool capabilities", async () => {
 		const response = await handleLspMcpRequest({
 			jsonrpc: "2.0",
@@ -20,7 +20,7 @@ describe("codex-lsp MCP server", () => {
 			id: 1,
 			result: {
 				capabilities: { tools: { listChanged: false } },
-				serverInfo: { name: "codex-lsp", version: "0.1.0" },
+				serverInfo: { name: "lsp", version: "0.1.0" },
 			},
 		});
 	});
@@ -34,27 +34,45 @@ describe("codex-lsp MCP server", () => {
 
 		const tools = response?.result?.tools as Array<{ name: string }>;
 		expect(tools.map((tool) => tool.name)).toEqual([
-			"lsp_status",
-			"lsp_diagnostics",
-			"lsp_goto_definition",
-			"lsp_find_references",
-			"lsp_symbols",
-			"lsp_prepare_rename",
-			"lsp_rename",
+			"status",
+			"diagnostics",
+			"goto_definition",
+			"find_references",
+			"symbols",
+			"prepare_rename",
+			"rename",
 		]);
 	});
 
-	it("calls lsp_status without starting a language server", async () => {
+	it("calls status without starting a language server", async () => {
 		const response = await handleLspMcpRequest({
 			jsonrpc: "2.0",
 			id: 3,
+			method: "tools/call",
+			params: { name: "status", arguments: {} },
+		});
+
+		expect(response).toMatchObject({
+			jsonrpc: "2.0",
+			id: 3,
+			result: {
+				isError: false,
+			},
+		});
+		expect(response?.result?.content?.[0]?.text).toContain("Configured LSP servers");
+	});
+
+	it("accepts legacy lsp-prefixed tool names without listing them", async () => {
+		const response = await handleLspMcpRequest({
+			jsonrpc: "2.0",
+			id: 4,
 			method: "tools/call",
 			params: { name: "lsp_status", arguments: {} },
 		});
 
 		expect(response).toMatchObject({
 			jsonrpc: "2.0",
-			id: 3,
+			id: 4,
 			result: {
 				isError: false,
 			},

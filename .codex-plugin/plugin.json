@@ -27,7 +27,7 @@
 		"defaultPrompt": [
 			"Run LSP diagnostics on the files I just edited.",
 			"Use LSP to find references before changing this symbol.",
-			"Check whether this rename is safe with lsp_prepare_rename."
+			"Check whether this rename is safe with lsp.prepare_rename."
 		],
 		"brandColor": "#0F766E",
 		"screenshots": []

@@ -21,5 +21,5 @@ Conventions for humans and agents working on this repository.
 
 - LSP server processes are owned by `LspManager`.
 - Tool execution acquires clients through `withLspClient(...)` unless it only reports static status.
-- `lsp_rename` mutates files by applying workspace edits; keep it sequential at the MCP caller level.
+- `lsp.rename` mutates files by applying workspace edits; keep it sequential at the MCP caller level.
 - Do not add pi-coding-agent or omo source dependencies. This package is standalone.

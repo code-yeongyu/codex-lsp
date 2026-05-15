@@ -74,7 +74,7 @@ export async function withLspClient(filePath, fn, toolName, options = {}) {
     const absPath = resolve(filePath);
     if (isDirectoryPath(absPath)) {
         throw new LspInvalidPathError("Directory paths are not supported by this LSP tool. " +
-            "Use lsp_diagnostics with a directory path for directory diagnostics.");
+            "Use lsp.diagnostics with a directory path for directory diagnostics.");
     }
     const ext = extname(absPath);
     const result = findServerForExtension(ext);

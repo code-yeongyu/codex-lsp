@@ -19,15 +19,15 @@ Deletes are ignored because they cannot introduce new diagnostics.
 
 ## MCP Tools
 
-- `lsp_status`
-- `lsp_diagnostics`
-- `lsp_goto_definition`
-- `lsp_find_references`
-- `lsp_symbols`
-- `lsp_prepare_rename`
-- `lsp_rename`
+- `lsp.status`
+- `lsp.diagnostics`
+- `lsp.goto_definition`
+- `lsp.find_references`
+- `lsp.symbols`
+- `lsp.prepare_rename`
+- `lsp.rename`
 
-`lsp_rename` applies the returned workspace edit to files. Use `lsp_prepare_rename` first when possible.
+`lsp.rename` applies the returned workspace edit to files. Use `lsp.prepare_rename` first when possible.
 
 ## Configuration
 
@@ -56,14 +56,14 @@ Example:
 }
 ```
 
-Built-in server definitions are used when no custom config overrides them. `lsp_status` shows which configured servers are installed or missing.
+Built-in server definitions are used when no custom config overrides them. `lsp.status` shows which configured servers are installed or missing.
 
 ## Codex Plugin
 
 The plugin ships:
 
 - `.codex-plugin/plugin.json` for Codex plugin discovery.
-- `.mcp.json` for the `codex-lsp` MCP server.
+- `.mcp.json` for the `lsp` MCP server.
 - `hooks/hooks.json` for the `PostToolUse` diagnostics hook.
 - `skills/lsp/SKILL.md` with MCP usage guidance.
 

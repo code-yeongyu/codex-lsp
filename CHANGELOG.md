@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Renamed the MCP server namespace to `lsp` and exposed shorter tool names such as `lsp.diagnostics`.
+
 ## 0.1.0
 
 - Ported the standalone LSP client, server resolution, diagnostics aggregation, and workspace edit runtime from `pi-lsp-client`.

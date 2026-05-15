@@ -52,6 +52,7 @@ export interface JsonSchema {
 
 export interface LspMcpTool {
 	name: string;
+	aliases?: string[];
 	title: string;
 	description: string;
 	inputSchema: JsonSchema;
@@ -529,9 +530,13 @@ export async function executeLspTool(
 	params: Record<string, unknown>,
 	signal?: AbortSignal,
 ): Promise<ToolExecutionResult> {
-	const tool = LSP_MCP_TOOLS.find((candidate) => candidate.name === name);
+	const tool = LSP_MCP_TOOLS.find((candidate) => matchesToolName(candidate, name));
 	if (!tool) throw new Error(`Unknown LSP tool: ${name}`);
 	return tool.execute(params, signal);
+}
+
+function matchesToolName(tool: LspMcpTool, name: string): boolean {
+	return tool.name === name || (tool.aliases?.includes(name) ?? false);
 }
 
 export function coerceToolArguments(value: unknown): Record<string, unknown> {
@@ -540,14 +545,16 @@ export function coerceToolArguments(value: unknown): Record<string, unknown> {
 
 export const LSP_MCP_TOOLS: LspMcpTool[] = [
 	{
-		name: "lsp_status",
+		name: "status",
+		aliases: ["lsp_status"],
 		title: "LSP Status",
 		description: "List configured and active LSP servers without starting a new language server.",
 		inputSchema: objectSchema({}),
 		execute: executeLspStatus,
 	},
 	{
-		name: "lsp_diagnostics",
+		name: "diagnostics",
+		aliases: ["lsp_diagnostics"],
 		title: "LSP Diagnostics",
 		description: "Get errors, warnings, and hints for a source file or directory.",
 		inputSchema: objectSchema(
@@ -564,7 +571,8 @@ export const LSP_MCP_TOOLS: LspMcpTool[] = [
 		execute: executeLspDiagnostics,
 	},
 	{
-		name: "lsp_goto_definition",
+		name: "goto_definition",
+		aliases: ["lsp_goto_definition"],
 		title: "LSP Goto Definition",
 		description: "Find where a symbol is defined.",
 		inputSchema: objectSchema(
@@ -578,7 +586,8 @@ export const LSP_MCP_TOOLS: LspMcpTool[] = [
 		execute: executeLspGotoDefinition,
 	},
 	{
-		name: "lsp_find_references",
+		name: "find_references",
+		aliases: ["lsp_find_references"],
 		title: "LSP Find References",
 		description: "Find references of a symbol across the workspace.",
 		inputSchema: objectSchema(
@@ -593,7 +602,8 @@ export const LSP_MCP_TOOLS: LspMcpTool[] = [
 		execute: executeLspFindReferences,
 	},
 	{
-		name: "lsp_symbols",
+		name: "symbols",
+		aliases: ["lsp_symbols"],
 		title: "LSP Symbols",
 		description: "List document symbols or search workspace symbols.",
 		inputSchema: objectSchema(
@@ -612,7 +622,8 @@ export const LSP_MCP_TOOLS: LspMcpTool[] = [
 		execute: executeLspSymbols,
 	},
 	{
-		name: "lsp_prepare_rename",
+		name: "prepare_rename",
+		aliases: ["lsp_prepare_rename"],
 		title: "LSP Prepare Rename",
 		description: "Check whether a symbol can be renamed at a position.",
 		inputSchema: objectSchema(
@@ -626,7 +637,8 @@ export const LSP_MCP_TOOLS: LspMcpTool[] = [
 		execute: executeLspPrepareRename,
 	},
 	{
-		name: "lsp_rename",
+		name: "rename",
+		aliases: ["lsp_rename"],
 		title: "LSP Rename",
 		description: "Rename a symbol across the workspace and apply the returned workspace edit.",
 		inputSchema: objectSchema(

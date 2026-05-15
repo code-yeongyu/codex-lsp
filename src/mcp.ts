@@ -34,7 +34,7 @@ export interface JsonRpcResponse {
 	error?: JsonRpcError;
 }
 
-const SERVER_NAME = "codex-lsp";
+const SERVER_NAME = "lsp";
 const SERVER_VERSION = "0.1.0";
 
 export async function handleLspMcpRequest(input: unknown): Promise<JsonRpcResponse | undefined> {

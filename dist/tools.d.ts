@@ -19,6 +19,7 @@ export interface JsonSchema {
 }
 export interface LspMcpTool {
     name: string;
+    aliases?: string[];
     title: string;
     description: string;
     inputSchema: JsonSchema;

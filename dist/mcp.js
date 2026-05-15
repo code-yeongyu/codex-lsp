@@ -1,6 +1,6 @@
 import { createInterface } from "node:readline";
 import { coerceToolArguments, executeLspTool, LSP_MCP_TOOLS } from "./tools.js";
-const SERVER_NAME = "codex-lsp";
+const SERVER_NAME = "lsp";
 const SERVER_VERSION = "0.1.0";
 export async function handleLspMcpRequest(input) {
     if (!isRecord(input)) {
