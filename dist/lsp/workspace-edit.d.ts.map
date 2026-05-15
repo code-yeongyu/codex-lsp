@@ -1,0 +1,1 @@
+{"version":3,"file":"workspace-edit.d.ts","sourceRoot":"","sources":["../../src/lsp/workspace-edit.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAY,aAAa,EAAE,MAAM,YAAY,CAAC;AAE1D,MAAM,WAAW,WAAW;IAC3B,OAAO,EAAE,OAAO,CAAC;IACjB,aAAa,EAAE,MAAM,EAAE,CAAC;IACxB,UAAU,EAAE,MAAM,CAAC;IACnB,MAAM,EAAE,MAAM,EAAE,CAAC;CACjB;AAgDD,wBAAgB,kBAAkB,CAAC,IAAI,EAAE,aAAa,GAAG,IAAI,GAAG,WAAW,CAyE1E"}

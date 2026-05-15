@@ -1,0 +1,1 @@
+{"version":3,"file":"language-mappings.d.ts","sourceRoot":"","sources":["../../src/lsp/language-mappings.ts"],"names":[],"mappings":"AAAA,eAAO,MAAM,eAAe,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CA2BlD,CAAC;AAEF,eAAO,MAAM,YAAY,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAK/C,CAAC;AAEF,eAAO,MAAM,WAAW,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAmI9C,CAAC;AAEF,wBAAgB,aAAa,CAAC,GAAG,EAAE,MAAM,GAAG,MAAM,CAEjD"}
