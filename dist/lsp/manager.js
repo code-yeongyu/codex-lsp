@@ -1,5 +1,14 @@
+import { reportBestEffortCleanupError } from "./cleanup-errors.js";
 import { LspClient } from "./client.js";
 import { IDLE_TIMEOUT_MS, INIT_TIMEOUT_MS, REAPER_INTERVAL_MS } from "./constants.js";
+async function stopClientBestEffort(client) {
+    try {
+        await client.stop();
+    }
+    catch (error) {
+        reportBestEffortCleanupError("client stop", error);
+    }
+}
 function awaitWithSignal(promise, signal) {
     if (!signal)
         return promise;
@@ -59,9 +68,11 @@ export class LspManager {
         const handler = () => {
             for (const managed of this.clients.values()) {
                 try {
-                    managed.client.stop().catch(() => { });
+                    void stopClientBestEffort(managed.client);
                 }
-                catch { }
+                catch (error) {
+                    reportBestEffortCleanupError("exit handler client stop", error);
+                }
             }
             this.clients.clear();
         };
@@ -79,7 +90,7 @@ export class LspManager {
             if (managed.isInitializing &&
                 managed.initializingSince !== null &&
                 t - managed.initializingSince > this.initTimeoutMs) {
-                managed.client.stop().catch(() => { });
+                void stopClientBestEffort(managed.client);
                 this.clients.delete(key);
                 continue;
             }
@@ -87,7 +98,7 @@ export class LspManager {
                 managed.refCount === 0 &&
                 managed.pendingWaiters === 0 &&
                 t - managed.lastUsedAt > this.idleTimeoutMs) {
-                managed.client.stop().catch(() => { });
+                void stopClientBestEffort(managed.client);
                 this.clients.delete(key);
             }
         }
@@ -98,7 +109,7 @@ export class LspManager {
             !managed.isInitializing &&
             this.clients.get(key) === managed) {
             this.clients.delete(key);
-            await managed.client.stop().catch(() => { });
+            await stopClientBestEffort(managed.client);
         }
     }
     async getClient(root, server, signal) {
@@ -113,7 +124,7 @@ export class LspManager {
             if (managed.isInitializing &&
                 managed.initializingSince !== null &&
                 t - managed.initializingSince > this.initTimeoutMs) {
-                await managed.client.stop().catch(() => { });
+                await stopClientBestEffort(managed.client);
                 this.clients.delete(key);
                 managed = undefined;
             }
@@ -136,7 +147,7 @@ export class LspManager {
                 signal.throwIfAborted();
             }
             if (!managed.client.isAlive()) {
-                await managed.client.stop().catch(() => { });
+                await stopClientBestEffort(managed.client);
                 this.clients.delete(key);
                 return this.getClient(root, server, signal);
             }
@@ -168,7 +179,7 @@ export class LspManager {
             if (this.clients.get(key) === newManaged) {
                 this.clients.delete(key);
             }
-            await client.stop().catch(() => { });
+            await stopClientBestEffort(client);
             throw err;
         }
         newManaged.pendingWaiters--;
@@ -199,7 +210,7 @@ export class LspManager {
         if (client && managed.client !== client)
             return;
         this.clients.delete(key);
-        managed.client.stop().catch(() => { });
+        void stopClientBestEffort(managed.client);
     }
     warmupClient(root, server) {
         if (this.disposed)
@@ -232,7 +243,7 @@ export class LspManager {
             if (this.clients.get(key) === managed) {
                 this.clients.delete(key);
             }
-            client.stop().catch(() => { });
+            void stopClientBestEffort(client);
         });
     }
     isServerInitializing(root, serverId) {
@@ -274,7 +285,7 @@ export class LspManager {
         }
         const stopPromises = [];
         for (const managed of this.clients.values()) {
-            stopPromises.push(managed.client.stop().catch(() => { }));
+            stopPromises.push(stopClientBestEffort(managed.client));
         }
         this.clients.clear();
         await Promise.allSettled(stopPromises);

@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
 import { delimiter, join } from "node:path";
+import { reportBestEffortCleanupError } from "./cleanup-errors.js";
 import { LspInvalidPathError, LspProcessSpawnError } from "./errors.js";
 export function validateCwd(cwd) {
     try {
@@ -46,7 +47,9 @@ function wrap(proc) {
             try {
                 proc.kill(signal ?? "SIGTERM");
             }
-            catch { }
+            catch (error) {
+                reportBestEffortCleanupError("process kill", error);
+            }
         },
     };
 }

@@ -44,9 +44,6 @@
 		"lint:fix": "biome check --write .",
 		"check": "tsc --noEmit && biome check . && npm run build"
 	},
-	"dependencies": {
-		"vscode-jsonrpc": "^8.2.1"
-	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.15",
 		"@types/node": "^25.7.0",

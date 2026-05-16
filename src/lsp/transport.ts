@@ -1,20 +1,45 @@
 import { delimiter } from "node:path";
-import {
-	createMessageConnection,
-	type MessageConnection,
-	StreamMessageReader,
-	StreamMessageWriter,
-} from "vscode-jsonrpc/node.js";
 
+import { reportBestEffortCleanupError } from "./cleanup-errors.js";
 import { REQUEST_TIMEOUT_MS, STOP_HARD_KILL_TIMEOUT_MS, STOP_SIGKILL_GRACE_MS } from "./constants.js";
 import { LspConnectionClosedError, LspProcessExitedError, LspRequestTimeoutError } from "./errors.js";
+import { JsonRpcConnection } from "./json-rpc-connection.js";
 import { type SpawnedProcess, spawnProcess } from "./process.js";
 import { getAdditionalPathBases } from "./server-installation.js";
 import type { Diagnostic, ResolvedServer } from "./types.js";
 
+interface ConfigurationItem {
+	section?: string;
+}
+
+interface DiagnosticsParams {
+	uri: string;
+	diagnostics: Diagnostic[];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function parseConfigurationItems(params: unknown): ConfigurationItem[] {
+	if (!isRecord(params) || !Array.isArray(params.items)) return [];
+	const items: ConfigurationItem[] = [];
+	for (const item of params.items) {
+		if (!isRecord(item)) continue;
+		items.push({ section: typeof item.section === "string" ? item.section : undefined });
+	}
+	return items;
+}
+
+function parseDiagnosticsParams(params: unknown): DiagnosticsParams | null {
+	if (!isRecord(params) || typeof params.uri !== "string") return null;
+	const diagnostics = Array.isArray(params.diagnostics) ? (params.diagnostics as Diagnostic[]) : [];
+	return { uri: params.uri, diagnostics };
+}
+
 export class LspClientTransport {
 	protected proc: SpawnedProcess | null = null;
-	protected connection: MessageConnection | null = null;
+	protected connection: JsonRpcConnection | null = null;
 	protected readonly stderrBuffer: string[] = [];
 	protected processExited = false;
 	protected readonly diagnosticsStore = new Map<string, Diagnostic[]>();
@@ -57,22 +82,17 @@ export class LspClientTransport {
 			throw new LspProcessExitedError(this.server.id, this.root, this.proc.exitCode, stderr.slice(-2000));
 		}
 
-		this.connection = createMessageConnection(
-			new StreamMessageReader(this.proc.stdout),
-			new StreamMessageWriter(this.proc.stdin),
-		);
+		this.connection = new JsonRpcConnection(this.proc.stdout, this.proc.stdin);
 
-		this.connection.onNotification(
-			"textDocument/publishDiagnostics",
-			(params: { uri?: string; diagnostics?: Diagnostic[] }) => {
-				if (params.uri) {
-					this.diagnosticsStore.set(params.uri, params.diagnostics ?? []);
-				}
-			},
-		);
+		this.connection.onNotification("textDocument/publishDiagnostics", (params) => {
+			const diagnosticsParams = parseDiagnosticsParams(params);
+			if (diagnosticsParams?.uri) {
+				this.diagnosticsStore.set(diagnosticsParams.uri, diagnosticsParams.diagnostics);
+			}
+		});
 
-		this.connection.onRequest("workspace/configuration", (params: { items?: Array<{ section?: string }> }) => {
-			const items = params?.items ?? [];
+		this.connection.onRequest("workspace/configuration", (params) => {
+			const items = parseConfigurationItems(params);
 			return items.map((item) => {
 				if (item.section === "json") return { validate: { enable: true } };
 				return {};
@@ -86,7 +106,9 @@ export class LspClientTransport {
 			this.processExited = true;
 		});
 
-		this.connection.onError(() => {});
+		this.connection.onError((error) => {
+			reportBestEffortCleanupError("connection error notification", error);
+		});
 
 		this.connection.listen();
 	}
@@ -137,7 +159,10 @@ export class LspClientTransport {
 		});
 
 		try {
-			const requestPromise = (this.connection.sendRequest as <R>(...a: unknown[]) => Promise<R>)<T>(method, ...args);
+			const requestPromise =
+				args.length === 0
+					? this.connection.sendRequest<T>(method)
+					: this.connection.sendRequest<T>(method, args[0]);
 			const result = await Promise.race([requestPromise, timeoutPromise]);
 			if (timeoutHandle !== null) clearTimeout(timeoutHandle);
 			return result;
@@ -164,7 +189,11 @@ export class LspClientTransport {
 		if (!this.connection) return;
 		if (this.processExited || (this.proc && this.proc.exitCode !== null)) return;
 		try {
-			await (this.connection.sendNotification as (...a: unknown[]) => Promise<void>)(method, ...args);
+			if (args.length === 0) {
+				await this.connection.sendNotification(method);
+			} else {
+				await this.connection.sendNotification(method, args[0]);
+			}
 		} catch (error) {
 			if (this.isConnectionClosedError(error)) {
 				throw new LspConnectionClosedError(this.server.id, this.root, error.message);
@@ -181,13 +210,19 @@ export class LspClientTransport {
 		if (this.connection) {
 			try {
 				await this.sendRequest<null>("shutdown");
-			} catch {}
+			} catch (error) {
+				reportBestEffortCleanupError("shutdown request", error);
+			}
 			try {
 				await this.sendNotification("exit");
-			} catch {}
+			} catch (error) {
+				reportBestEffortCleanupError("exit notification", error);
+			}
 			try {
 				this.connection.dispose();
-			} catch {}
+			} catch (error) {
+				reportBestEffortCleanupError("connection dispose", error);
+			}
 			this.connection = null;
 		}
 
@@ -218,9 +253,13 @@ export class LspClientTransport {
 							proc.exited,
 							new Promise<void>((resolve) => setTimeout(resolve, STOP_SIGKILL_GRACE_MS)),
 						]);
-					} catch {}
+					} catch (error) {
+						reportBestEffortCleanupError("hard process kill", error);
+					}
 				}
-			} catch {}
+			} catch (error) {
+				reportBestEffortCleanupError("process stop", error);
+			}
 		}
 
 		this.processExited = true;

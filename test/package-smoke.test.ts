@@ -16,6 +16,7 @@ describe("plugin package metadata", () => {
 
 		// when
 		const bin = packageJson.bin as Record<string, unknown>;
+		const dependencies = packageJson.dependencies as Record<string, unknown> | undefined;
 		const hookConfig = hooksJson.hooks as Record<string, Array<{ hooks: Array<{ command: string }> }>>;
 		const command = hookConfig.PostToolUse?.[0]?.hooks[0]?.command;
 		const mcpServers = mcpJson.mcpServers as Record<string, { command: string; args: string[] }>;
@@ -24,6 +25,7 @@ describe("plugin package metadata", () => {
 		// then
 		expect(packageJson.type).toBe("module");
 		expect(packageJson.packageManager).toBe("npm@11.12.1");
+		expect(dependencies ?? {}).toEqual({});
 		expect(bin["codex-lsp"]).toBe("./dist/cli.js");
 		expect(pluginJson.hooks).toBe("./hooks/hooks.json");
 		expect(pluginJson.mcpServers).toBe("./.mcp.json");

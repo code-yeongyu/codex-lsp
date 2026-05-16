@@ -1,11 +1,11 @@
-import { type MessageConnection } from "vscode-jsonrpc/node.js";
+import { JsonRpcConnection } from "./json-rpc-connection.js";
 import { type SpawnedProcess } from "./process.js";
 import type { Diagnostic, ResolvedServer } from "./types.js";
 export declare class LspClientTransport {
     protected readonly root: string;
     protected readonly server: ResolvedServer;
     protected proc: SpawnedProcess | null;
-    protected connection: MessageConnection | null;
+    protected connection: JsonRpcConnection | null;
     protected readonly stderrBuffer: string[];
     protected processExited: boolean;
     protected readonly diagnosticsStore: Map<string, Diagnostic[]>;

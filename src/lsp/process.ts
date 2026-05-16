@@ -2,6 +2,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
 import { delimiter, join } from "node:path";
 
+import { reportBestEffortCleanupError } from "./cleanup-errors.js";
 import { LspInvalidPathError, LspProcessSpawnError } from "./errors.js";
 
 export interface SpawnedProcess {
@@ -71,7 +72,9 @@ function wrap(proc: ChildProcess): SpawnedProcess {
 		kill(signal?: NodeJS.Signals) {
 			try {
 				proc.kill(signal ?? "SIGTERM");
-			} catch {}
+			} catch (error) {
+				reportBestEffortCleanupError("process kill", error);
+			}
 		},
 	};
 }
