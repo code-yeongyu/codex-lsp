@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Renamed the MCP server namespace to `lsp` and exposed shorter tool names such as `lsp.diagnostics`.
+- Use portable Codex hook interpolation and add package smoke coverage for hook/MCP entrypoints.
+- Spawn language servers without shell mode; Windows `.cmd` and `.bat` shims are routed through `cmd.exe` with explicit arguments.
+- Cap directory diagnostics file traversal and run CI on Windows in addition to Ubuntu and macOS.
 
 ## 0.1.0
 

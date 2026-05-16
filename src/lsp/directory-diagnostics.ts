@@ -15,7 +15,7 @@ interface FileDiagnostic {
 	diagnostic: Diagnostic;
 }
 
-function collectFilesWithExtension(dir: string, extension: string, maxFiles: number): string[] {
+export function collectFilesWithExtension(dir: string, extension: string, maxFiles: number): string[] {
 	const files: string[] = [];
 
 	function walk(currentDir: string): void {

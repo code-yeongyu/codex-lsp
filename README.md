@@ -70,7 +70,7 @@ The plugin ships:
 The hook command is:
 
 ```bash
-node "$PLUGIN_ROOT/dist/cli.js" hook post-tool-use
+node "${PLUGIN_ROOT}/dist/cli.js" hook post-tool-use
 ```
 
 The MCP command is:
@@ -120,7 +120,7 @@ enabled = true
 ## Branch Rules and Releases
 
 - `main` is protected by `.github/branch-ruleset.json`.
-- CI runs Node 20 and 22 on Ubuntu and macOS.
+- CI runs Node 20 and 22 on Ubuntu, macOS, and Windows.
 - Releases are GitHub Releases tagged as `v<semver>`.
 - Publishing runs from the `publish` workflow after a GitHub Release is published.
 

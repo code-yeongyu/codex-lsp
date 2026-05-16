@@ -7,7 +7,7 @@ import { filterDiagnosticsBySeverity, formatDiagnostic } from "./formatters.js";
 import { getLspManager } from "./manager.js";
 import { findServerForExtension } from "./server-resolution.js";
 const SKIP_DIRECTORIES = new Set(["node_modules", ".git", "dist", "build", ".next", "out"]);
-function collectFilesWithExtension(dir, extension, maxFiles) {
+export function collectFilesWithExtension(dir, extension, maxFiles) {
     const files = [];
     function walk(currentDir) {
         if (files.length >= maxFiles)
