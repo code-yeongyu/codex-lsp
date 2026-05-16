@@ -23,7 +23,15 @@ export async function runLspPostToolUseHook(input, runDiagnostics = runLspDiagno
     const reason = blocks
         .map(({ filePath, diagnostics }) => `LSP diagnostics after editing ${filePath}:\n${diagnostics}`)
         .join("\n\n");
-    return `${JSON.stringify({ decision: "block", reason })}\n`;
+    const output = {
+        decision: "block",
+        reason,
+        hookSpecificOutput: {
+            hookEventName: "PostToolUse",
+            additionalContext: reason,
+        },
+    };
+    return `${JSON.stringify(output)}\n`;
 }
 export function extractMutatedFilePaths(input) {
     if (!isMutationTool(input.tool_name))

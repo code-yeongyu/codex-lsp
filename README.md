@@ -10,7 +10,7 @@ Codex plugin that ports the standalone LSP runtime from [`pi-lsp-client`](https:
 |------|--------|
 | `apply_patch` succeeds | parses `tool_input.command`, extracts added/updated/moved files, and checks each with LSP error diagnostics |
 | `write` / `edit` / `multiedit` succeeds | checks `path`, `filePath`, or `file_path` aliases |
-| diagnostics contain errors | returns Codex `PostToolUse` blocking feedback so Codex fixes the file |
+| diagnostics contain errors | returns Codex `PostToolUse` blocking feedback and injects the same diagnostics as additional context so Codex fixes the file |
 | no diagnostics | emits no hook output |
 | unsupported extension | emits no hook output |
 | missing configured language server | surfaces the install/config message through hook or MCP output |

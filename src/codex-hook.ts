@@ -15,6 +15,15 @@ interface DiagnosticBlock {
 	diagnostics: string;
 }
 
+interface PostToolUseHookOutput {
+	decision: "block";
+	reason: string;
+	hookSpecificOutput: {
+		hookEventName: "PostToolUse";
+		additionalContext: string;
+	};
+}
+
 const MUTATION_TOOL_NAMES = new Set(["apply_patch", "write", "edit", "multiedit", "multi_edit"]);
 const CLEAN_DIAGNOSTICS_TEXT = "No diagnostics found";
 const UNSUPPORTED_EXTENSION_TEXT = "No LSP server configured for extension:";
@@ -43,7 +52,15 @@ export async function runLspPostToolUseHook(
 	const reason = blocks
 		.map(({ filePath, diagnostics }) => `LSP diagnostics after editing ${filePath}:\n${diagnostics}`)
 		.join("\n\n");
-	return `${JSON.stringify({ decision: "block", reason })}\n`;
+	const output: PostToolUseHookOutput = {
+		decision: "block",
+		reason,
+		hookSpecificOutput: {
+			hookEventName: "PostToolUse",
+			additionalContext: reason,
+		},
+	};
+	return `${JSON.stringify(output)}\n`;
 }
 
 export function extractMutatedFilePaths(input: CodexPostToolUseInput): string[] {
