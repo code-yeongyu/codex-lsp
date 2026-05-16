@@ -51,10 +51,70 @@ describe("codex PostToolUse hook", () => {
 
 		expect(JSON.parse(output)).toEqual({
 			decision: "block",
+			hookSpecificOutput: {
+				hookEventName: "PostToolUse",
+				additionalContext:
+					"LSP diagnostics after editing src/broken.ts:\n" +
+					"error[typescript] (2304) at 1:1: Cannot find name 'missing'.",
+			},
 			reason:
 				"LSP diagnostics after editing src/broken.ts:\n" +
 				"error[typescript] (2304) at 1:1: Cannot find name 'missing'.",
 		});
+	});
+
+	it("injects only files with diagnostics when multiple files are edited", async () => {
+		const checkedFilePaths: string[] = [];
+		const output = await runLspPostToolUseHook(
+			{
+				tool_name: "MultiEdit",
+				tool_input: {
+					file_paths: ["src/clean.ts", "README.md", "src/broken.ts", "src/broken.ts"],
+				},
+				tool_response: { ok: true },
+			},
+			async (filePath) => {
+				checkedFilePaths.push(filePath);
+				if (filePath === "src/broken.ts") {
+					return "error[typescript] (2322) at 1:7: Type 'number' is not assignable to type 'string'.";
+				}
+				if (filePath === "README.md") {
+					return "No LSP server configured for extension: .md";
+				}
+				return "No diagnostics found";
+			},
+		);
+
+		const expectedDiagnostics =
+			"LSP diagnostics after editing src/broken.ts:\n" +
+			"error[typescript] (2322) at 1:7: Type 'number' is not assignable to type 'string'.";
+
+		expect(checkedFilePaths).toEqual(["src/clean.ts", "README.md", "src/broken.ts"]);
+		expect(JSON.parse(output)).toEqual({
+			decision: "block",
+			hookSpecificOutput: {
+				hookEventName: "PostToolUse",
+				additionalContext: expectedDiagnostics,
+			},
+			reason: expectedDiagnostics,
+		});
+	});
+
+	it("does not run diagnostics for failed mutation tool responses", async () => {
+		const output = await runLspPostToolUseHook(
+			{
+				tool_name: "apply_patch",
+				tool_input: {
+					command: "*** Begin Patch\n*** Update File: src/broken.ts\n@@\n+missing();\n*** End Patch\n",
+				},
+				tool_response: { isError: true },
+			},
+			async () => {
+				throw new Error("diagnostics should not run after failed mutations");
+			},
+		);
+
+		expect(output).toBe("");
 	});
 
 	it("is silent for clean diagnostics and unsupported extensions", async () => {
