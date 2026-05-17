@@ -58,6 +58,8 @@ Example:
 
 Built-in server definitions are used when no custom config overrides them. `lsp.status` shows which configured servers are installed or missing.
 
+Rust uses `rust-analyzer` from `PATH`; this plugin does not auto-run `rustup` at startup. If `rust-analyzer` exits while loading `rust-src`, repair the active toolchain with `rustup component remove rust-src` and `rustup component add rust-src`, then retry the LSP tool.
+
 ## Codex Plugin
 
 The plugin ships:

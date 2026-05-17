@@ -18,7 +18,9 @@ export const LSP_INSTALL_HINTS: Record<string, string> = {
 	csharp: "dotnet tool install -g csharp-ls",
 	fsharp: "dotnet tool install -g fsautocomplete",
 	"sourcekit-lsp": "Included with Xcode or Swift toolchain",
-	rust: "rustup component add rust-analyzer",
+	rust:
+		"Install rust-analyzer and ensure it is in PATH. If using rustup: rustup component add rust-analyzer. " +
+		"If rust-analyzer exits while loading rust-src: rustup component remove rust-src && rustup component add rust-src.",
 	clangd: "See https://clangd.llvm.org/installation",
 	svelte: "npm install -g svelte-language-server",
 	astro: "npm install -g @astrojs/language-server",
@@ -157,6 +159,5 @@ export const AUTO_INSTALLABLE_SERVERS: Record<string, string[]> = {
 	ruff: ["pip", "install", "ruff"],
 	ty: ["pip", "install", "ty"],
 	"ruby-lsp": ["gem", "install", "ruby-lsp"],
-	rust: ["rustup", "component", "add", "rust-analyzer"],
 	"ocaml-lsp": ["opam", "install", "ocaml-lsp-server"],
 };
