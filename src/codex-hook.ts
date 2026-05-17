@@ -84,10 +84,20 @@ export function extractMutatedFilePaths(input: CodexPostToolUseInput): string[] 
 export async function runPostToolUseHookCli(stdin: NodeJS.ReadStream = processStdin): Promise<void> {
 	const raw = await readStdin(stdin);
 	if (!raw.trim()) return;
-	const parsed: unknown = JSON.parse(raw);
-	const input = isRecord(parsed) ? parsed : {};
+	const input = parsePostToolUseHookInput(raw);
+	if (!input) return;
 	const output = await runLspPostToolUseHook(input);
 	if (output) process.stdout.write(output);
+}
+
+export function parsePostToolUseHookInput(raw: string): CodexPostToolUseInput | undefined {
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(raw);
+	} catch {
+		return undefined;
+	}
+	return isRecord(parsed) ? parsed : undefined;
 }
 
 function isMutationTool(value: unknown): boolean {

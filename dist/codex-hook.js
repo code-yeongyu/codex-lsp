@@ -55,11 +55,22 @@ export async function runPostToolUseHookCli(stdin = processStdin) {
     const raw = await readStdin(stdin);
     if (!raw.trim())
         return;
-    const parsed = JSON.parse(raw);
-    const input = isRecord(parsed) ? parsed : {};
+    const input = parsePostToolUseHookInput(raw);
+    if (!input)
+        return;
     const output = await runLspPostToolUseHook(input);
     if (output)
         process.stdout.write(output);
+}
+export function parsePostToolUseHookInput(raw) {
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    }
+    catch {
+        return undefined;
+    }
+    return isRecord(parsed) ? parsed : undefined;
 }
 function isMutationTool(value) {
     if (typeof value !== "string")

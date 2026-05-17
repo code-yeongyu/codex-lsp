@@ -8,4 +8,5 @@ export declare function runLspDiagnosticsText(filePath: string): Promise<string>
 export declare function runLspPostToolUseHook(input: CodexPostToolUseInput, runDiagnostics?: DiagnosticsRunner): Promise<string>;
 export declare function extractMutatedFilePaths(input: CodexPostToolUseInput): string[];
 export declare function runPostToolUseHookCli(stdin?: NodeJS.ReadStream): Promise<void>;
+export declare function parsePostToolUseHookInput(raw: string): CodexPostToolUseInput | undefined;
 //# sourceMappingURL=codex-hook.d.ts.map
