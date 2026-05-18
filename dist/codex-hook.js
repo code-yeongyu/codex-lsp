@@ -1,5 +1,5 @@
 import { stdin as processStdin } from "node:process";
-import { executeLspDiagnostics } from "./tools.js";
+import { executeLspDiagnostics } from "@code-yeongyu/lsp-tools-mcp/dist/tools.js";
 const MUTATION_TOOL_NAMES = new Set(["apply_patch", "write", "edit", "multiedit", "multi_edit"]);
 const CLEAN_DIAGNOSTICS_TEXT = "No diagnostics found";
 const UNSUPPORTED_EXTENSION_TEXT = "No LSP server configured for extension:";
