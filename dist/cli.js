@@ -26,4 +26,3 @@ main().catch(async (error) => {
     await disposeDefaultLspManager();
     process.exitCode = 1;
 });
-//# sourceMappingURL=cli.js.map
