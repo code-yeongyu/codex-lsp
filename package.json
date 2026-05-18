@@ -36,15 +36,14 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
-		"prepare": "npm --prefix packages/lsp-tools-mcp install",
-		"build:submodule": "npm --prefix packages/lsp-tools-mcp install && npm --prefix packages/lsp-tools-mcp run build && npm install --no-fund --no-audit --ignore-scripts",
-		"build": "npm run build:submodule && tsc -p tsconfig.build.json",
-		"test": "npm run build:submodule && vitest --run",
+		"bootstrap": "node scripts/bootstrap-submodule.mjs",
+		"build": "tsc -p tsconfig.build.json",
+		"test": "vitest --run",
 		"test:watch": "vitest",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check src test",
 		"lint:fix": "biome check --write src test",
-		"check": "npm run build:submodule && tsc --noEmit && biome check src test && tsc -p tsconfig.build.json"
+		"check": "tsc --noEmit && biome check src test && tsc -p tsconfig.build.json"
 	},
 	"dependencies": {
 		"@code-yeongyu/lsp-tools-mcp": "file:./packages/lsp-tools-mcp"

@@ -93,12 +93,16 @@ node ./packages/lsp-tools-mcp/dist/cli.js mcp
 
 ```bash
 git submodule update --init --recursive
+npm run bootstrap     # installs + builds the lsp-tools-mcp submodule
 npm install
 npm test
 npm run typecheck
 npm run check
 npm pack --dry-run
 ```
+
+The `bootstrap` script installs and builds the `lsp-tools-mcp` git submodule so
+`@code-yeongyu/lsp-tools-mcp/dist/*.js` is available for the codex-lsp build.
 
 Smoke-test the hook:
 
