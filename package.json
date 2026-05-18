@@ -1,6 +1,6 @@
 {
 	"name": "@code-yeongyu/codex-lsp",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Codex plugin that exposes Language Server Protocol tools and post-edit diagnostics.",
 	"type": "module",
 	"packageManager": "npm@11.12.1",
@@ -36,13 +36,17 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
+		"bootstrap": "node scripts/bootstrap-submodule.mjs",
 		"build": "tsc -p tsconfig.build.json",
 		"test": "vitest --run",
 		"test:watch": "vitest",
 		"typecheck": "tsc --noEmit",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"check": "tsc --noEmit && biome check . && npm run build"
+		"lint": "biome check src test",
+		"lint:fix": "biome check --write src test",
+		"check": "tsc --noEmit && biome check src test && tsc -p tsconfig.build.json"
+	},
+	"dependencies": {
+		"@code-yeongyu/lsp-tools-mcp": "file:./packages/lsp-tools-mcp"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.15",

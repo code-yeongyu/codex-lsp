@@ -1,6 +1,6 @@
 import { stdin as processStdin } from "node:process";
 
-import { executeLspDiagnostics } from "./tools.js";
+import { executeLspDiagnostics } from "@code-yeongyu/lsp-tools-mcp/dist/tools.js";
 
 export type DiagnosticsRunner = (filePath: string) => Promise<string>;
 

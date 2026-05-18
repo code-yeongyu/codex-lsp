@@ -25,13 +25,15 @@ describe("plugin package metadata", () => {
 		// then
 		expect(packageJson.type).toBe("module");
 		expect(packageJson.packageManager).toBe("npm@11.12.1");
-		expect(dependencies ?? {}).toEqual({});
+		expect(dependencies).toEqual({
+			"@code-yeongyu/lsp-tools-mcp": "file:./packages/lsp-tools-mcp",
+		});
 		expect(bin["codex-lsp"]).toBe("./dist/cli.js");
 		expect(pluginJson.hooks).toBe("./hooks/hooks.json");
 		expect(pluginJson.mcpServers).toBe("./.mcp.json");
 		expect(cliSource.startsWith("#!/usr/bin/env node")).toBe(true);
 		expect(command).toBe(`node "${pluginRoot}/dist/cli.js" hook post-tool-use`);
 		expect(mcpServers.lsp?.command).toBe("node");
-		expect(mcpServers.lsp?.args).toEqual(["./dist/cli.js", "mcp"]);
+		expect(mcpServers.lsp?.args).toEqual(["./packages/lsp-tools-mcp/dist/cli.js", "mcp"]);
 	});
 });

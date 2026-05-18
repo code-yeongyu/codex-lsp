@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { argv, stderr } from "node:process";
+import { disposeDefaultLspManager } from "@code-yeongyu/lsp-tools-mcp/dist/lsp/manager.js";
+import { runMcpStdioServer } from "@code-yeongyu/lsp-tools-mcp/dist/mcp.js";
 import { runPostToolUseHookCli } from "./codex-hook.js";
-import { disposeDefaultLspManager } from "./lsp/manager.js";
-import { runMcpStdioServer } from "./mcp.js";
 async function main() {
     const [command = "mcp", subcommand = ""] = argv.slice(2);
     try {

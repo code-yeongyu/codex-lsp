@@ -4,6 +4,14 @@
 
 Codex plugin that ports the standalone LSP runtime from [`pi-lsp-client`](https://github.com/code-yeongyu/pi-lsp-client). It gives Codex post-edit diagnostics plus explicit MCP tools for language-aware code work.
 
+## Architecture
+
+The LSP runtime moved to [`lsp-tools-mcp`](https://github.com/code-yeongyu/lsp-tools-mcp) and is consumed here as a git submodule at `packages/lsp-tools-mcp/`.
+
+- `codex-lsp` keeps Codex-specific integration (`hook post-tool-use`, plugin metadata, package wiring).
+- `lsp-tools-mcp` owns MCP runtime, LSP manager, and tool implementations.
+- `src/cli.ts` routes `mcp` to upstream runtime and keeps `hook post-tool-use` local.
+
 ## Behavior
 
 | Case | Result |
@@ -67,7 +75,7 @@ The plugin ships:
 - `hooks/hooks.json` for the `PostToolUse` diagnostics hook.
 - `skills/lsp/SKILL.md` with MCP usage guidance.
 
-The runtime has no npm production dependencies, so a clean Codex marketplace copy can run without a follow-up `npm install`.
+The runtime depends on `@code-yeongyu/lsp-tools-mcp` via `file:./packages/lsp-tools-mcp`, so marketplace builds must include submodule contents.
 
 The hook command is:
 
@@ -78,18 +86,23 @@ node "${PLUGIN_ROOT}/dist/cli.js" hook post-tool-use
 The MCP command is:
 
 ```bash
-node ./dist/cli.js mcp
+node ./packages/lsp-tools-mcp/dist/cli.js mcp
 ```
 
 ## Local Development
 
 ```bash
+git submodule update --init --recursive
+npm run bootstrap     # installs + builds the lsp-tools-mcp submodule
 npm install
 npm test
 npm run typecheck
 npm run check
 npm pack --dry-run
 ```
+
+The `bootstrap` script installs and builds the `lsp-tools-mcp` git submodule so
+`@code-yeongyu/lsp-tools-mcp/dist/*.js` is available for the codex-lsp build.
 
 Smoke-test the hook:
 
@@ -112,7 +125,7 @@ codex plugin marketplace add /path/to/codex-plugins
 node /path/to/codex-plugins/scripts/install-local.mjs /path/to/codex-plugins
 ```
 
-If your local Codex build exposes plugin install commands, you can install from the UI or CLI instead. For older local builds, the marketplace installer builds and copies the plugin into `~/.codex/plugins/cache/<marketplace>/codex-lsp/0.1.0` and enables:
+If your local Codex build exposes plugin install commands, you can install from the UI or CLI instead. For older local builds, the marketplace installer builds and copies the plugin into `~/.codex/plugins/cache/<marketplace>/codex-lsp/0.2.0` and enables:
 
 ```toml
 [plugins."codex-lsp@code-yeongyu-codex-plugins"]
