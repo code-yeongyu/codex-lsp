@@ -37,12 +37,16 @@
 	],
 	"scripts": {
 		"bootstrap": "node scripts/bootstrap-submodule.mjs",
+		"prebuild": "node scripts/bootstrap-submodule.mjs",
 		"build": "tsc -p tsconfig.build.json",
+		"pretest": "node scripts/bootstrap-submodule.mjs",
 		"test": "vitest --run",
 		"test:watch": "vitest",
+		"pretypecheck": "node scripts/bootstrap-submodule.mjs",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check src test",
 		"lint:fix": "biome check --write src test",
+		"precheck": "node scripts/bootstrap-submodule.mjs",
 		"check": "tsc --noEmit && biome check src test && tsc -p tsconfig.build.json"
 	},
 	"dependencies": {
