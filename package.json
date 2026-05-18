@@ -36,13 +36,17 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
-		"test": "vitest --run",
+		"prepare": "npm --prefix packages/lsp-tools-mcp install",
+		"build": "npm --prefix packages/lsp-tools-mcp install && npm --prefix packages/lsp-tools-mcp run build && tsc -p tsconfig.build.json",
+		"test": "npm --prefix packages/lsp-tools-mcp install && npm --prefix packages/lsp-tools-mcp run build && vitest --run",
 		"test:watch": "vitest",
 		"typecheck": "tsc --noEmit",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"check": "tsc --noEmit && biome check . && npm run build"
+		"lint": "biome check src test",
+		"lint:fix": "biome check --write src test",
+		"check": "tsc --noEmit && biome check src test && npm run build"
+	},
+	"dependencies": {
+		"@code-yeongyu/lsp-tools-mcp": "file:./packages/lsp-tools-mcp"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.15",
