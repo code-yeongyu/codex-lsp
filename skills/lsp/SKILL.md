@@ -5,7 +5,7 @@ description: Use when Codex needs language-server diagnostics, definitions, refe
 
 # Codex LSP
 
-Use the `lsp` MCP tools when language-aware feedback is useful before or after code edits.
+Call `lsp` MCP tools through the tool interface; `lsp.*`/`mcp__lsp__*` are tool-call names, not shell commands.
 
 ## Tools
 

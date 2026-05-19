@@ -86,6 +86,19 @@ describe("plugin package metadata", () => {
 		expect(lspServer?.command).toBe("node");
 		expect(lspServer?.args).toEqual(["./packages/lsp-tools-mcp/dist/cli.js", "mcp"]);
 	});
+
+	it("#given LSP skill guidance #when validating MCP tool instructions #then tool names are not framed as shell commands", () => {
+		// given
+		const skill = readFileSync("skills/lsp/SKILL.md", "utf8");
+
+		// when
+		const mentionsToolInterface = skill.includes("through the tool interface");
+		const rejectsShellExecution = skill.includes("not shell commands");
+
+		// then
+		expect(mentionsToolInterface).toBe(true);
+		expect(rejectsShellExecution).toBe(true);
+	});
 });
 
 function isPackageJson(value: unknown): value is PackageJson {
