@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 type PackageJson = {
+	readonly version: string;
 	readonly type: string;
 	readonly packageManager: string;
 	readonly bin: Record<string, string>;
@@ -9,6 +10,7 @@ type PackageJson = {
 };
 
 type PluginJson = {
+	readonly version: string;
 	readonly hooks: string;
 	readonly mcpServers: string;
 };
@@ -73,6 +75,7 @@ describe("plugin package metadata", () => {
 		const pluginRoot = ["$", "{PLUGIN_ROOT}"].join("");
 
 		// then
+		expect(pluginJson.version).toBe(packageJson.version);
 		expect(packageJson.type).toBe("module");
 		expect(packageJson.packageManager).toBe("npm@11.12.1");
 		expect(packageJson.dependencies).toEqual({
@@ -104,6 +107,7 @@ describe("plugin package metadata", () => {
 function isPackageJson(value: unknown): value is PackageJson {
 	return (
 		isRecord(value) &&
+		typeof value["version"] === "string" &&
 		value["type"] === "module" &&
 		value["packageManager"] === "npm@11.12.1" &&
 		isStringRecord(value["bin"]) &&
@@ -112,7 +116,12 @@ function isPackageJson(value: unknown): value is PackageJson {
 }
 
 function isPluginJson(value: unknown): value is PluginJson {
-	return isRecord(value) && typeof value["hooks"] === "string" && typeof value["mcpServers"] === "string";
+	return (
+		isRecord(value) &&
+		typeof value["version"] === "string" &&
+		typeof value["hooks"] === "string" &&
+		typeof value["mcpServers"] === "string"
+	);
 }
 
 function isHooksJson(value: unknown): value is HooksJson {

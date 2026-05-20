@@ -1,6 +1,6 @@
 {
 	"name": "codex-lsp",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Expose Language Server Protocol diagnostics and navigation tools to Codex.",
 	"author": {
 		"name": "Yeongyu Kim",
