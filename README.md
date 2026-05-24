@@ -125,10 +125,10 @@ codex plugin marketplace add /path/to/codex-plugins
 node /path/to/codex-plugins/scripts/install-local.mjs /path/to/codex-plugins
 ```
 
-If your local Codex build exposes plugin install commands, you can install from the UI or CLI instead. For older local builds, the marketplace installer builds and copies the plugin into `~/.codex/plugins/cache/<marketplace>/codex-lsp/0.2.0` and enables:
+If your local Codex build exposes plugin install commands, you can install from the UI or CLI instead. For older local builds, the marketplace installer builds and copies the plugin into `~/.codex/plugins/cache/<marketplace>/omo/0.1.0` and enables:
 
 ```toml
-[plugins."codex-lsp@code-yeongyu-codex-plugins"]
+[plugins."omo@code-yeongyu-codex-plugins"]
 enabled = true
 ```
 
