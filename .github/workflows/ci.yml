@@ -31,7 +31,7 @@ jobs:
           submodules: recursive
 
       - name: Setup Node ${{ matrix.node }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm
